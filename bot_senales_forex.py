@@ -7,7 +7,7 @@ import yfinance as yf
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 
-PARES = ["EURUSD=X", "GBPUSD=X"]
+PARES = ["EUR/USD=X", "GBP/USD=X", "USD/JPY=X", "AUD/USD=X", "USD/CAD=X", "USD/CHF=X", "NZD/USD=X"]
 INTERVALO = "5m"
 PERIODO_DESCARGA = "5d"
 EMA_RAPIDA = 9
@@ -110,5 +110,4 @@ def ciclo():
 
 if __name__ == "__main__":
     print("Bot de señales - ejecución única (GitHub Actions)")
-    enviar_telegram("¡conexion exitosa! El bot de GiHub Actions se comunica correctamente con telegram.")
     ciclo()
