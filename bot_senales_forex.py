@@ -93,14 +93,16 @@ def ciclo():
                 direccion, precio, rsi, macd_hist = resultado
                 nombre = par.replace("=X", "")
                 nombre = f"{nombre[:3]}/{nombre[3:]}"
-                emoji_direccion = "🟢" if "CALL" in direccion else "🔴"
+                
+                # Emojis minimalistas y limpios
+                emoji_dir = "🟢 🟢" if "CALL" in direccion else "🔴 🔴"
+                
+                # Mensaje súper corto y directo al grano
                 mensaje = (
-                    f"Señal confirmada\n"
-                    f"Par: {nombre}\n"
-                    f"Dirección: {emoji_direccion} {direccion}\n"
-                    f"Precio de cierre: {precio:.5f}\n"
-                    f"Temporalidad: {INTERVALO}\n"
-                    f"Apertura de la próxima vela"
+                    f"🌐 [GitHub 5m]\n"
+                    f"🎯 {nombre} ➔ {emoji_dir} {direccion.upper()}\n"
+                    f"💰 Precio: {precio:.5f}\n"
+                    f"⏳ Próxima Vela"
                 )
                 print(mensaje)
                 enviar_telegram(mensaje)
