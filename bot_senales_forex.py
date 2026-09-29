@@ -8,7 +8,7 @@ TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 
 PARES = ["EURUSD=X", "GBPUSD=X"]
-INTERVALO = "15m"
+INTERVALO = "5m"
 PERIODO_DESCARGA = "5d"
 EMA_RAPIDA = 9
 EMA_LENTA = 21
@@ -110,4 +110,5 @@ def ciclo():
 
 if __name__ == "__main__":
     print("Bot de señales - ejecución única (GitHub Actions)")
+    enviar_telegram("¡conexion exitosa! El bot de GiHub Actions se comunica correctamente con telegram.")
     ciclo()
