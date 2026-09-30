@@ -2,12 +2,15 @@ import os
 import requests
 import pandas as pd
 import yfinance as yf
+from curl_cffi import requests as cf_requests
+
+SESSION = cf_requests.Session(impersonate="chrome")
 
 # ------------------ CONFIGURACIÓN ------------------
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
 TELEGRAM_CHAT_ID = os.environ["TELEGRAM_CHAT_ID"]
 
-PARES = ["EUR/USD=X", "GBP/USD=X", "USD/JPY=X", "AUD/USD=X", "USD/CAD=X", "USD/CHF=X", "NZD/USD=X"]
+PARES = ["EURUSD=X", "GBPUSD=X", "USDJPY=X", "AUDUSD=X", "USDCAD=X", "USDCHF=X", "EURJPY=X"]
 INTERVALO = "5m"
 PERIODO_DESCARGA = "5d"
 EMA_RAPIDA = 9
@@ -55,7 +58,7 @@ def obtener_senal(simbolo: str):
     minimo_datos = max(EMA_LENTA, MACD_LENTA + MACD_SENAL) + 2
 
     # --- DIAGNÓSTICO 1: descarga de datos ---
-    df = yf.download(simbolo, period=PERIODO_DESCARGA, interval=INTERVALO, progress=False)
+    df = yf.download(simbolo, period=PERIODO_DESCARGA, interval=INTERVALO, progress=False, session=SESSION)
     print(f"[DIAG] {simbolo}: filas descargadas = {len(df)} (mínimo requerido = {minimo_datos})")
 
     if df.empty:
@@ -87,6 +90,11 @@ def obtener_senal(simbolo: str):
     macd_confirma_alcista = macd_hist > 0
     macd_confirma_bajista = macd_hist < 0
 
+    # --- DIAGNÓSTICO 2: estado de las condiciones ---
+    print(f"[DIAG] {simbolo}: close={ultima['Close']:.5f} RSI={rsi:.2f} "
+          f"MACD_hist={macd_hist:.6f} cruce_alcista={cruce_alcista} "
+          f"cruce_bajista={cruce_bajista}")
+
     if cruce_alcista and rsi < RSI_SOBRECOMPRA and macd_confirma_alcista:
         return "CALL (compra)", ultima["Close"], rsi, macd_hist
     elif cruce_bajista and rsi > RSI_SOBREVENTA and macd_confirma_bajista:
@@ -103,23 +111,21 @@ def ciclo():
                 direccion, precio, rsi, macd_hist = resultado
                 nombre = par.replace("=X", "")
                 nombre = f"{nombre[:3]}/{nombre[3:]}"
-                
-                # Emojis minimalistas y limpios
-                emoji_dir = "🟢 🟢" if "CALL" in direccion else "🔴 🔴"
-                
-                # Mensaje súper corto y directo al grano
+                emoji_direccion = "🟢" if "CALL" in direccion else "🔴"
                 mensaje = (
-                    f"🌐 [GitHub 5m]\n"
-                    f"🎯 {nombre} ➔ {emoji_dir} {direccion.upper()}\n"
-                    f"💰 Precio: {precio:.5f}\n"
-                    f"⏳ Próxima Vela"
+                    f"Señal confirmada\n"
+                    f"Par: {nombre}\n"
+                    f"Dirección: {emoji_direccion} {direccion}\n"
+                    f"Precio de cierre: {precio:.5f}\n"
+                    f"Temporalidad: {INTERVALO}\n"
+                    f"Apertura de la próxima vela"
                 )
                 print(mensaje)
                 enviar_telegram(mensaje)
         except Exception as e:
-            print(f"Error procesando {par}: {e}")
+            print(f"[ERROR] procesando {par}: {e}")
 
 
-if __name__ == "__main__":
-    print("Bot de señales - ejecución única (GitHub Actions)")
+if _name_ == "_main_":
+    print("Bot de señales - ejecución única (GitHub Actions) - MODO DIAGNÓSTICO")
     ciclo()
