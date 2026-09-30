@@ -53,8 +53,18 @@ def calcular_macd(precios: pd.Series, rapida: int, lenta: int, senal: int):
 
 def obtener_senal(simbolo: str):
     minimo_datos = max(EMA_LENTA, MACD_LENTA + MACD_SENAL) + 2
+
+    # --- DIAGNÓSTICO 1: descarga de datos ---
     df = yf.download(simbolo, period=PERIODO_DESCARGA, interval=INTERVALO, progress=False)
-    if df.empty or len(df) < minimo_datos:
+    print(f"[DIAG] {simbolo}: filas descargadas = {len(df)} (mínimo requerido = {minimo_datos})")
+
+    if df.empty:
+        print(f"[DIAG] {simbolo}: ⚠️ Yahoo Finance devolvió un DataFrame VACÍO. "
+              f"Posible bloqueo/limitación desde el servidor de GitHub Actions.")
+        return None
+
+    if len(df) < minimo_datos:
+        print(f"[DIAG] {simbolo}: ⚠️ No hay suficientes datos ({len(df)} < {minimo_datos}).")
         return None
 
     if isinstance(df.columns, pd.MultiIndex):
