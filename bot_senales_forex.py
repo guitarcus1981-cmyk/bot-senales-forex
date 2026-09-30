@@ -113,7 +113,7 @@ def ciclo():
                 nombre = f"{nombre[:3]}/{nombre[3:]}"
                 emoji_direccion = "🟢" if "CALL" in direccion else "🔴"
                 mensaje = (
-                    f"Señal confirmada\n"
+                    f"☁️ [GITHUB] Señal confirmada\n"
                     f"Par: {nombre}\n"
                     f"Dirección: {emoji_direccion} {direccion}\n"
                     f"Precio de cierre: {precio:.5f}\n"
