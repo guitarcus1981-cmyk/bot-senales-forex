@@ -112,5 +112,4 @@ def ciclo():
 
 if __name__ == "__main__":
     print("Bot de señales - ejecución única (GitHub Actions)")
-    enviar_telegram("prueba de conexion - si ves esto, telegram esta funcionando correctamente")
     ciclo()
