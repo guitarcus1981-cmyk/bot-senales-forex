@@ -126,6 +126,6 @@ def ciclo():
             print(f"[ERROR] procesando {par}: {e}")
 
 
-if _name_ == "_main_":
+if __name__ == "__main__":
     print("Bot de señales - ejecución única (GitHub Actions) - MODO DIAGNÓSTICO")
     ciclo()
